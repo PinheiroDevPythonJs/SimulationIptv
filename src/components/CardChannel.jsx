@@ -15,19 +15,25 @@ export function CardChannel() {
     const playerRef = useRef(null);
     useEffect(() => {
         const client_iptv = async () => {
-            const user = await fetch("http://localhost:8010/user")
+            const user = await fetch(
+                "http://serveriptv-production.up.railway.app/user",
+            )
                 .then((res) => res.json())
                 .then((data) => setClient(data));
 
-            const cats = await fetch("http://localhost:8010/categories")
+            const cats = await fetch(
+                "http://serveriptv-production.up.railway.app/categories",
+            )
                 .then((res) => res.json())
                 .then((data) => setCategories(data));
 
-            const reqChannels = await fetch("http://localhost:8010/canais")
+            const reqChannels = await fetch(
+                "http://serveriptv-production.up.railway.app/canais",
+            )
                 .then((res) => res.json())
                 .then((data) => setChannels(data));
         };
-        client_iptv();     
+        client_iptv();
     }, []);
 
     const listChannelsFiltereds = (category_id) => {
@@ -43,7 +49,7 @@ export function CardChannel() {
         if (formattedUrl === url) {
             if (playerRef.current) {
                 playerRef.current.req;
-                uestFullscreen();
+                playerRef.current.requestFullscreen();
                 playerRef.current.play();
             }
         } else {
@@ -73,22 +79,26 @@ export function CardChannel() {
     };
 
     return (
-        <div className="bg-rose-300 rounded-md p-1 shadow-2xl border-box">
-            <h2 className="text-white font-bold text-3xl text-center mb-4">
-                IPTV Player Pro
+        <div className="bg-rose-300 flex flex-col items-center w-full rounded-md px-2 pb-2 shadow-2xl border-box">
+            <h2 className="text-white font-bold text-3xl text-center mb-2">
+                Player Pro
             </h2>
-            <div className=" w-56 m-auto bg-black rounded-md mb-3">
-                <p className="text-white text-center font-semibold">Status: {client.status}</p>
-                <p className="text-white text-center font-semibold">{client.message} ao nosso Player</p>
+            <div className=" w-fit m-auto bg-black rounded-md mb-3 p-2">
+                <p className="text-white text-center font-semibold text-2xl text-nowrap">
+                    {client.message} ao nosso Player
+                </p>
+                <p className="text-white text-center font-semibold">
+                    Status: {client.status}
+                </p>
             </div>
-            <h3 className="text-white font-bold text-2xl text-center mb-2">
-                Escolha uma das Categorias
-            </h3>
 
-            <div className="flex gap-2 w-full box-border overflow-hidden">
+            <div className="flex items-center gap-2 p-4 min-w-full bg-black rounded-md">
                 <div className="w-1/3 flex flex-col">
+                    <h3 className="text-white font-bold text-2xl text-center mb-2">
+                        Escolha uma Categoria para Assistir
+                    </h3>
                     <select
-                        className="bg-rose-50 border-none rounded-md p-2 mb-2 w-full shadow-inner focus:ring-2 focus:ring-rose-500 outline-none text-center"
+                        className="bg-rose-50 border-none rounded-md p-2 mb-2 w-32 m-auto shadow-inner focus:ring-2 focus:ring-rose-500 outline-none text-center"
                         onChange={(e) => {
                             const selectId = e.target.value;
                             listChannelsFiltereds(selectId);
@@ -102,13 +112,13 @@ export function CardChannel() {
                                 onClick={() =>
                                     setCategoryAtual(category.category_name)
                                 }
-                                className="bg-white m-2 rounded-md w-40 text-center "
+                                className="bg-white m-2 rounded-md w-40 text-center font-semibold"
                             >
                                 {category.category_name}
                             </option>
                         ))}
                     </select>
-                    <div className="max-h-75 overflow-y-auto box-border">
+                    <div className="max-h-75 bg-white overflow-y-auto box-border w-fit m-auto p-2 rounded-md">
                         {filteredChannels.length > 0 && (
                             <div>
                                 {filteredChannels.map((channel, i) => {
@@ -127,7 +137,7 @@ export function CardChannel() {
                                                 className="rounded-md w-6 h-6 mt-1"
                                             />
                                             <button
-                                                className={`m-1 rounded-md text-center w-32 transition-all ${isActive ? "bg-blue-400 text-white font-bold" : "bg-slate-100"} `}
+                                                className={`m-1 rounded-md text-center font-semibold w-32 transition-all cursor-pointer ${isActive ? "bg-blue-400 text-white font-bold" : "bg-slate-100"} `}
                                                 onClick={() => {
                                                     handleChannelClick(
                                                         channel.url,

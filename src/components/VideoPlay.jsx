@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { useEffect, useRef } from "react";
-import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 
 export const VideoPlay = ({ url, onReady }) => {
     const videoRef = useRef(null);
@@ -13,7 +13,7 @@ export const VideoPlay = ({ url, onReady }) => {
         responsive: true,
         fluid: true,
         preload: "auto",
-        aspectRatio: '16:9',
+        aspectRatio: "16:9",
         fill: true,
         liveui: false,
         controlBar: {
@@ -21,25 +21,31 @@ export const VideoPlay = ({ url, onReady }) => {
             pictureInPictureToggle: false,
             volumePanel: {
                 inline: false,
-            }
+            },
         },
-        sources: [{
-            src: url,
-            type: 'application/x-mpegURL'
-        }]
+        sources: [
+            {
+                src: url,
+                type: "application/x-mpegURL",
+            },
+        ],
     };
 
     useEffect(() => {
         if (!playerRef.current) {
             const videoElement = document.createElement("video-js");
 
-            videoElement.classList.add('vjs-big-play-centered');
+            videoElement.classList.add("vjs-big-play-centered");
             videoRef.current.appendChild(videoElement);
 
-            const player = playerRef.current = videojs(videoElement, options, () => {
-                videojs.log('player is ready');
-                onReady && onReady(player);
-            });
+            const player = (playerRef.current = videojs(
+                videoElement,
+                options,
+                () => {
+                    videojs.log("player is ready");
+                    onReady && onReady(player);
+                },
+            ));
         } else {
             const player = playerRef.current;
 
@@ -60,7 +66,9 @@ export const VideoPlay = ({ url, onReady }) => {
 
             // Alguns browsers exigem o load() para streams HLS
             player.load();
-            player.play().catch(e => console.log("Autoplay aguardando interação"));
+            player
+                .play()
+                .catch((e) => console.log("Autoplay aguardando interação"));
         }
     }, [url]); // Só roda quando a URL mudar
 
@@ -76,8 +84,13 @@ export const VideoPlay = ({ url, onReady }) => {
     }, []);
 
     return (
-        <div className="w-full h-full">
-            <div ref={videoRef} data-vjs-player playsInline className="bg-black vjs-big-play-centered aspect-video" />
+        <div>
+            <div
+                ref={videoRef}
+                data-vjs-player
+                playsInline
+                className="bg-black vjs-big-play-centered aspect-video"
+            />
         </div>
     );
-}
+};
