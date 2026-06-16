@@ -15,20 +15,16 @@ export function CardChannel() {
     const playerRef = useRef(null);
     useEffect(() => {
         const client_iptv = async () => {
-            const user = await fetch(
-                "http://serveriptv-production.up.railway.app/user",
-            )
+            const user = await fetch(`${import.meta.env.VITE_API}/user`)
                 .then((res) => res.json())
                 .then((data) => setClient(data));
 
-            const cats = await fetch(
-                "http://serveriptv-production.up.railway.app/categories",
-            )
+            const cats = await fetch(`${import.meta.env.VITE_API}/categories`)
                 .then((res) => res.json())
                 .then((data) => setCategories(data));
 
             const reqChannels = await fetch(
-                "http://serveriptv-production.up.railway.app/canais",
+                `${import.meta.env.VITE_API}/canais`,
             )
                 .then((res) => res.json())
                 .then((data) => setChannels(data));
