@@ -128,7 +128,7 @@ export function CardChannel() {
                                             className="flex"
                                         >
                                             <img
-                                                src={channel.stream_icon}
+                                                src={`https://images.weserv.nl/?url=${channel.stream_icon}`}
                                                 alt="stream_icon"
                                                 className="rounded-md w-6 h-6 mt-1"
                                             />
