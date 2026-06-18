@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import videojs from "video.js";
 import { Xtream } from "@iptv/xtream-api";
 import { VideoPlay } from "./VideoPlay";
@@ -9,10 +9,8 @@ export function CardChannel() {
     const [categoryAtual, setCategoryAtual] = useState(null);
     const [channels, setChannels] = useState([]);
     const [channelAtual, setChannelAtual] = useState(null);
-    const [filteredChannels, setFilteredChannels] = useState([]);
-    const [url, setUrl] = useState(null);
-
     const playerRef = useRef(null);
+    
     useEffect(() => {
         const client_iptv = async () => {
             const user = await fetch(`${import.meta.env.VITE_API}/user`)
@@ -32,13 +30,15 @@ export function CardChannel() {
         client_iptv();
     }, []);
 
-    const listChannelsFiltereds = (category_id) => {
-        const filtereds = channels.filter((channel) => {
-            return String(channel.category_id) === String(category_id);
+    const ChannelsFiltereds = useMemo(() => {
+        if (!categoryAtual) return [];
+        return channels.filter((channel) => {
+            return String(channel.category_id) === String(categoryAtual);
         });
-        console.log(filtereds);
-        setFilteredChannels(filtereds);
-    };
+    }, [channels, categoryAtual]);
+
+    const url = channelAtual ? channelAtual.url.replace(".ts", ".m3u8").trim() : null;
+        
 
     const handleChannelClick = (channelUrl) => {
         const formattedUrl = channelUrl.replace(".ts", ".m3u8").trim();
@@ -49,7 +49,7 @@ export function CardChannel() {
                 playerRef.current.play();
             }
         } else {
-            setUrl(formattedUrl);
+            // setUrl(formattedUrl);
             console.log(url);
             console.log("Nova URL definida:", formattedUrl);
         }
@@ -88,7 +88,7 @@ export function CardChannel() {
                 </p>
             </div>
 
-            <div className="flex items-center gap-2 p-4 min-w-full bg-black rounded-md">
+            <div className="flex items-center gap-2 p-4 min-w-full bg-slate-800 rounded-md">
                 <div className="w-1/3 flex flex-col">
                     <h3 className="text-white font-bold text-2xl text-center mb-2">
                         Escolha uma Categoria para Assistir
@@ -97,65 +97,60 @@ export function CardChannel() {
                         className="bg-rose-50 border-none rounded-md p-2 mb-2 w-32 m-auto shadow-inner focus:ring-2 focus:ring-rose-500 outline-none text-center"
                         onChange={(e) => {
                             const selectId = e.target.value;
-                            listChannelsFiltereds(selectId);
+                            setCategoryAtual(selectId);
                         }}
                     >
                         {/* <option value="">Escolha uma Categoria</option> */}
-                        {categories.length > 0 && categories.map((category) => (
-                            <option
-                                key={category.category_id}
-                                value={category.category_id}
-                                onClick={() =>
-                                    setCategoryAtual(category.category_name)
-                                }
-                                className="bg-white m-2 rounded-md w-40 text-center font-semibold"
-                            >
-                                {category.category_name}
-                            </option>
-                        ))}
+                        {categories.length > 0 &&
+                            categories.map((category) => (
+                                <option
+                                    key={category.category_id}
+                                    value={category.category_id}
+                                    onClick={() =>
+                                        setCategoryAtual(category.category_id)
+                                    }
+                                    className="bg-white m-2 rounded-md w-40 text-center font-semibold"
+                                >
+                                    {category.category_name}
+                                </option>
+                            ))}
                     </select>
-                    <div className="max-h-75 bg-white overflow-y-auto box-border w-fit m-auto p-2 rounded-md">
-                        {filteredChannels.length > 0 && (
-                            <div>
-                                {filteredChannels.map((channel, i) => {
-                                    const channelM3u8 = channel.url
-                                        .replace(".ts", ".m3u8")
-                                        .trim();
-                                    const isActive = channelM3u8 === url;
-                                    return (
-                                        <div
-                                            key={`${channel.stream_id}-${i}`}
-                                            className="flex"
+                    {ChannelsFiltereds.length > 0 && (
+                        <div className="max-h-75 bg-white overflow-y-auto box-border w-fit m-auto p-2 rounded-md">
+                            {ChannelsFiltereds.map((channel, i) => {
+                                const channelM3u8 = channel.url
+                                    .replace(".ts", ".m3u8")
+                                    .trim();
+                                const isActive = channelM3u8 === url;
+                                return (
+                                    <div
+                                        key={`${channel.stream_id}-${i}`}
+                                        className="flex"
+                                    >
+                                        <img
+                                            src={`https://images.weserv.nl/?url=${channel.stream_icon}`}
+                                            alt="stream_icon"
+                                            className="rounded-md w-6 h-6 mt-1"
+                                        />
+                                        <button
+                                            className={`m-1 rounded-md text-center font-semibold w-32 transition-all cursor-pointer ${isActive ? "bg-blue-400 text-white font-bold" : "bg-slate-100"} `}
+                                            onClick={() => {
+                                                setChannelAtual(channel);
+                                                handleChannelClick(channel.url);
+                                            }}
                                         >
-                                            <img
-                                                src={`https://images.weserv.nl/?url=${channel.stream_icon}`}
-                                                alt="stream_icon"
-                                                className="rounded-md w-6 h-6 mt-1"
-                                            />
-                                            <button
-                                                className={`m-1 rounded-md text-center font-semibold w-32 transition-all cursor-pointer ${isActive ? "bg-blue-400 text-white font-bold" : "bg-slate-100"} `}
-                                                onClick={() => {
-                                                    handleChannelClick(
-                                                        channel.url,
-                                                    );
-                                                    setChannelAtual(
-                                                        channel.name,
-                                                    );
-                                                }}
-                                            >
-                                                {channel.name}
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
+                                            {channel.name}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
                 <div className="w-2/3 overflow-hidden self-start sticky box-border">
                     {channelAtual && (
                         <span className="text-white font-semibold ">
-                            {channelAtual}
+                            {channelAtual.name}
                         </span>
                     )}
                     {url && <VideoPlay url={url} onReady={handlePlayerReady} />}
