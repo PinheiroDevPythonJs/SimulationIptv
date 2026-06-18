@@ -101,7 +101,7 @@ export function CardChannel() {
                         }}
                     >
                         {/* <option value="">Escolha uma Categoria</option> */}
-                        {categories.map((category) => (
+                        {categories.length > 0 && categories.map((category) => (
                             <option
                                 key={category.category_id}
                                 value={category.category_id}
