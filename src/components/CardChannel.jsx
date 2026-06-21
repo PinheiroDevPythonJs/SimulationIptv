@@ -10,7 +10,7 @@ export function CardChannel() {
     const [channels, setChannels] = useState([]);
     const [channelAtual, setChannelAtual] = useState(null);
     const playerRef = useRef(null);
-    
+
     useEffect(() => {
         const client_iptv = async () => {
             const user = await fetch(`${import.meta.env.VITE_API}/user`)
@@ -37,8 +37,9 @@ export function CardChannel() {
         });
     }, [channels, categoryAtual]);
 
-    const url = channelAtual ? channelAtual.url.replace(".ts", ".m3u8").trim() : null;
-        
+    const url = channelAtual
+        ? channelAtual.url.replace(".ts", ".m3u8").trim()
+        : null;
 
     const handleChannelClick = (channelUrl) => {
         const formattedUrl = channelUrl.replace(".ts", ".m3u8").trim();
