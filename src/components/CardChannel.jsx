@@ -82,7 +82,7 @@ export function CardChannel() {
             </h2>
             <div className=" w-fit m-auto bg-black rounded-md mb-3 p-2">
                 <p className="text-white text-center font-semibold text-2xl text-nowrap">
-                    {client.message} ao nosso Player
+                    {client.message}
                 </p>
                 <p className="text-white text-center font-semibold">
                     Status: {client.status}
@@ -129,9 +129,9 @@ export function CardChannel() {
                                         className="flex"
                                     >
                                         <img
-                                            src={`https://images.weserv.nl/?url=${channel.stream_icon}`}
+                                            src={`${channel.stream_icon}`}
                                             alt="stream_icon"
-                                            className="rounded-md w-6 h-6 mt-1"
+                                            className="rounded-md w-12 h-12 mt-1 bg-black"
                                         />
                                         <button
                                             className={`m-1 rounded-md text-center font-semibold w-32 transition-all cursor-pointer ${isActive ? "bg-blue-400 text-white font-bold" : "bg-slate-100"} `}
