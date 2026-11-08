@@ -4,7 +4,7 @@ import { Xtream } from "@iptv/xtream-api";
 import { VideoPlay } from "./VideoPlay";
 
 export function CardChannel() {
-    const [client, setClient] = useState({});
+    const [client, setClient] = useState({"Teste": "PinheiroTvOnline"});
     const [categories, setCategories] = useState([]);
     const [categoryAtual, setCategoryAtual] = useState(null);
     const [channels, setChannels] = useState([]);
@@ -13,9 +13,9 @@ export function CardChannel() {
 
     useEffect(() => {
         const client_iptv = async () => {
-            const user = await fetch(`${import.meta.env.VITE_API}/user`)
-                .then((res) => res.json())
-                .then((data) => setClient(data));
+            // const user = await fetch(`${import.meta.env.VITE_API}/user`)
+            //     .then((res) => res.json())
+            //     .then((data) => setClient(data));
 
             const cats = await fetch(`${import.meta.env.VITE_API}/categories`)
                 .then((res) => res.json())
