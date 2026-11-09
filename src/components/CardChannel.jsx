@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import videojs from "video.js";
-import { Xtream } from "@iptv/xtream-api";
 import { VideoPlay } from "./VideoPlay";
+import IptvTsPlayer from "./VideoIptv";
 
 export function CardChannel() {
-    const [client, setClient] = useState({"Teste": "PinheiroTvOnline"});
+    const [client, setClient] = useState({
+        name: "PinheiroTvOnline",
+        status: "active",
+    });
     const [categories, setCategories] = useState([]);
     const [categoryAtual, setCategoryAtual] = useState(null);
     const [channels, setChannels] = useState([]);
@@ -13,9 +16,13 @@ export function CardChannel() {
 
     useEffect(() => {
         const client_iptv = async () => {
-            // const user = await fetch(`${import.meta.env.VITE_API}/user`)
-            //     .then((res) => res.json())
-            //     .then((data) => setClient(data));
+            const user = await fetch(`${import.meta.env.VITE_API}/user`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data) {
+                        setClient(data);
+                    }
+                });
 
             const cats = await fetch(`${import.meta.env.VITE_API}/categories`)
                 .then((res) => res.json())
@@ -37,12 +44,11 @@ export function CardChannel() {
         });
     }, [channels, categoryAtual]);
 
-    const url = channelAtual
-        ? channelAtual.url.replace(".ts", ".m3u8").trim()
-        : null;
+    const url = channelAtual ? channelAtual.url.trim() : null;
 
     const handleChannelClick = (channelUrl) => {
-        const formattedUrl = channelUrl.replace(".ts", ".m3u8").trim();
+        // channelUrl = `${import.meta.env.VITE_API}/stream?url=${channelUrl.trim()}`;
+        const formattedUrl = channelUrl.trim();
         if (formattedUrl === url) {
             if (playerRef.current) {
                 playerRef.current.req;
@@ -154,7 +160,8 @@ export function CardChannel() {
                             {channelAtual.name}
                         </span>
                     )}
-                    {url && <VideoPlay url={url} onReady={handlePlayerReady} />}
+                    {/* {url && <VideoPlay url={url} onReady={handlePlayerReady} />} */}
+                    {url && <IptvTsPlayer urlIptvOriginal={url} />}
                 </div>
             </div>
         </div>
